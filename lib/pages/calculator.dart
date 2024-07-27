@@ -29,7 +29,7 @@ class _ResponsiveCalculatorState extends State<ResponsiveCalculator> {
                   Expanded(child: Screen(firstRow: '0', secondRow: '0')),
                 ],
               ),
-              SizedBox(height: 400.0, child: Keypad()),
+              SizedBox(height: 550.0, child: Keypad()),
             ],
           ),
         ],),
