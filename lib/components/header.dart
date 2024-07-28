@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rescal/components/switch.dart';
 
 
 class Header extends StatelessWidget {
@@ -17,7 +18,7 @@ class Header extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Switch(value: !isDarkMode, onChanged: handleSwitchChange),
+          RescalSwitch(value: !isDarkMode, onChanged: handleSwitchChange, isDarkMode: isDarkMode),
         ],
       ),
     );
