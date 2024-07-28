@@ -16,7 +16,7 @@ class Screen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          '6,291 % 5',
+          '',
           style: TextStyle(
             fontSize: 40,
             fontWeight: FontWeight.w300,
@@ -24,7 +24,7 @@ class Screen extends StatelessWidget {
           ),
         ),
         const Text(
-          '1,258.2',
+          '',
           style: TextStyle(
             fontSize: 96,
             fontWeight: FontWeight.w300,
