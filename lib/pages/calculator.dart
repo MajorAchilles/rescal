@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rescal/components/header.dart';
 import 'package:rescal/components/keypad.dart';
 import 'package:rescal/components/screen.dart';
+import 'package:rescal/utils/calculator_state.dart';
 
 const _lightModeBackgroundColor = Color(0xFFF1F2F3);
 const _darkModeBackgroundColor = Color(0xFF000000);
@@ -9,7 +10,8 @@ const _darkModeBackgroundColor = Color(0xFF000000);
 class ResponsiveCalculator extends StatefulWidget {
   final void Function() onSwitch;
   final bool isDarkMode;
-  const ResponsiveCalculator({super.key, required this.onSwitch, required this.isDarkMode});
+  final CalculatorState calculatorState = CalculatorState();
+  ResponsiveCalculator({super.key, required this.onSwitch, required this.isDarkMode});
 
   @override
   State<ResponsiveCalculator> createState() => _ResponsiveCalculatorState();
@@ -35,7 +37,11 @@ class _ResponsiveCalculatorState extends State<ResponsiveCalculator> {
                   Expanded(child: Screen(firstRow: '0', secondRow: '0', isDarkMode: isDarkMode)),
                 ],
               ),
-              SizedBox(height: 450.0, child: Keypad(isDarkMode: isDarkMode)),
+              SizedBox(height: 450.0, child: Keypad(
+                isDarkMode: isDarkMode,
+                onAddValue: widget.calculatorState.addInput,
+                onAddOperator: widget.calculatorState.addOperator
+              )),
             ],
           ),
         ],),

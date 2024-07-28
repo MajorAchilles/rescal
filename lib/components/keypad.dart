@@ -60,7 +60,9 @@ class ButtonRow extends StatelessWidget {
 
 class Keypad extends StatelessWidget {
   final bool isDarkMode;
-  const Keypad({super.key, required this.isDarkMode});
+  Function onAddValue;
+  Function onAddOperator;
+  Keypad({super.key, required this.isDarkMode, required this.onAddValue, required this.onAddOperator});
 
   @override
   Widget build(BuildContext context) {
