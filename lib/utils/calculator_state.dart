@@ -25,6 +25,7 @@ class CalculatorState {
 
 
   void addInput(String value) {
+    print(value);
     double input = double.tryParse(value) ?? 0;
 
     if (operator == null) {
@@ -35,6 +36,7 @@ class CalculatorState {
   }
 
   void addOperator(Operator newOperator) {
+    print(newOperator);
     if (newOperator == Operator.clear) {
       firstInput = 0;
       secondInput = 0;
