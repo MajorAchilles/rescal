@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:rescal/components/button.dart';
-import 'package:rescal/utils/calculator_state.dart';
+import 'package:rescal/utils/operator.dart';
 
 const _highEmphasis = Color(0xFF4B5EFC);
 const _mediumEmphasisDarkMode = Color(0xFF4E505F);

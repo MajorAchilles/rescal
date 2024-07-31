@@ -16,16 +16,16 @@ class Screen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          '',
+          firstRow ?? '',
           style: TextStyle(
             fontSize: 40,
             fontWeight: FontWeight.w300,
             color: isDarkMode ? _secondRowColorDarkMode : _secondRowColorLightMode,
           ),
         ),
-        const Text(
-          '',
-          style: TextStyle(
+        Text(
+          secondRow ?? '',
+          style: const TextStyle(
             fontSize: 96,
             fontWeight: FontWeight.w300,
           ),
