@@ -25,123 +25,129 @@ class _ResponsiveCalculatorState extends State<ResponsiveCalculator> {
   double? _previousSecondInput;
   Operator? _operator;
   Operator? _previousOperator;
+  String _firstRow = "";
+  String _secondRow = "";
 
   void addInput(String value) {
     print(value);
     double input = double.tryParse(value) ?? 0;
 
+    double? firstInput = _firstInput;
+    double? secondInput = _secondInput;
+
     if (_operator == null) {
       if (_firstInput == null) {
-        _firstInput = input;
+        firstInput = input;
       } else {
-        _firstInput = (_firstInput! * 10) + input;
+        firstInput = (_firstInput! * 10) + input;
       }
     } else {
       if (_secondInput == null) {
-        _secondInput = input;
+        secondInput = input;
       } else {
-        _secondInput = (_secondInput! * 10) + input;
+        secondInput = (_secondInput! * 10) + input;
       }
     }
+    setState(() {
+      _firstInput = firstInput;
+      _secondInput = secondInput;
+      _firstRow = convertToHumanReadableString(_previousFirstInput, _previousSecondInput, _previousOperator);
+      _secondRow = convertToHumanReadableString(firstInput, secondInput, _operator);
+    });
   }
 
   void addOperator(Operator newOperator) {
-    if (_firstInput == null) {
-      return;
-    }
-
     print(newOperator);
-    if (newOperator == Operator.clear) {
-      setState(() {
-        _firstInput = null;
-        _secondInput = null;
-        _operator = null;
-        _previousFirstInput = null;
-        _previousSecondInput = null;
-        _previousOperator = null;
-      });
+
+    double? firstInput = _firstInput;
+    double? secondInput = _secondInput;
+    double? previousFirstInput = _previousFirstInput;
+    double? previousSecondInput = _previousSecondInput;
+    Operator? previousOperator = _previousOperator;
+    Operator? operator = _operator;
+
+    if (firstInput == null) {
       return;
     }
 
-    if (_operator == null) {
-      if (newOperator == Operator.sign) {
-        setState(() {
-          _firstInput == -_firstInput!;
-        });
-      }
+    switch (newOperator) {
+      case Operator.clear:
+        firstInput = null;
+        secondInput = null;
+        operator = null;
+        previousFirstInput = null;
+        previousSecondInput = null;
+        previousOperator = null;
+        break;
+      case Operator.equal:
+        secondInput ??= 0;
+        operator ??= newOperator;
 
-      if (newOperator == Operator.percent) {
-        setState(() {
-          _firstInput == _firstInput! / 100;
-        });
-      }
+        previousFirstInput = firstInput;
+        previousOperator = operator;
+        previousSecondInput = secondInput;
 
-      if (newOperator == Operator.backspace) {
-        setState(() {
-          _firstInput == (_firstInput! / 10).floorToDouble();
-        });
-      }
-
-      if (newOperator == Operator.decimal) {
-        setState(() {
-          _firstInput == _firstInput! + 0.1;
-        });
-      }
-    } else {
-      if (_secondInput == null) {
-        return;
-      }
-
-      if (newOperator == Operator.sign) {
-        setState(() {
-          _secondInput == -_secondInput!;
-        });
-      }
-
-      if (newOperator == Operator.percent) {
-        setState(() {
-          _secondInput == _secondInput! / 100;
-        });
-      }
-
-      if (newOperator == Operator.backspace) {
-        setState(() {
-          _secondInput == (_secondInput! / 10).floorToDouble();
-        });
-      }
-
-      if (newOperator == Operator.decimal) {
-        setState(() {
-          _secondInput == _secondInput! + 0.1;
-        });
-      }
-    }
-
-    if (newOperator == Operator.equal) {
-      setState(() {
-        _firstInput ??= 0;
-        _secondInput ??= 0;
-        _operator ??= Operator.equal;
-
-        _previousFirstInput = _firstInput!;
-        _previousOperator = _operator;
-        _previousSecondInput = _secondInput!;
-
-        _firstInput = calculate();
-        _secondInput = 0;
-        _operator = null;
-      });
-      print(_firstInput);
-      return;
+        firstInput = calculate();
+        secondInput = null;
+        operator = null;
+      case Operator.sign:
+        if (operator == null) {
+          firstInput = -firstInput;
+        } else {
+          secondInput = -secondInput!;
+        }
+        break;
+      case Operator.backspace:
+        if (operator == null) {
+          firstInput = (firstInput ~/ 10).toDouble();
+        } else {
+          secondInput = (secondInput! ~/ 10).toDouble();
+        }
+        break;
+      case Operator.decimal:
+        if (operator == null) {
+          if (!firstInput.toString().contains(".")) {
+            firstInput = firstInput! + 0.0;
+          }
+        } else {
+          if (!secondInput.toString().contains(".")) {
+            secondInput = secondInput! + 0.0;
+          }
+        }
+        break;
+      case Operator.percent:
+        if (operator == null) {
+          firstInput = firstInput / 100;
+        } else {
+          secondInput = secondInput! / 100;
+        }
+        break;
+      case Operator.divide:
+      case Operator.multiply:
+      case Operator.subtract:
+      case Operator.add:
+        operator = newOperator;
+        break;
     }
 
     setState(() {
-      _operator = newOperator;
+      _firstInput = firstInput;
+      _secondInput = secondInput;
+      _operator = operator;
+      _previousFirstInput = previousFirstInput;
+      _previousSecondInput = previousSecondInput;
+      _previousOperator = previousOperator;
+      _firstRow = convertToHumanReadableString(previousFirstInput, previousSecondInput, previousOperator);
+      _secondRow = convertToHumanReadableString(firstInput, secondInput, operator);
     });
   }
   double calculate() {
-    if (_firstInput == null || _secondInput == null) {
+    if (_firstInput == null) {
       return 0;
+    }
+
+    if (_secondInput == null) {
+      return _firstInput!;
     }
 
     switch (_operator) {
@@ -153,17 +159,46 @@ class _ResponsiveCalculatorState extends State<ResponsiveCalculator> {
         return _firstInput! * _secondInput!;
       case Operator.divide:
         return _firstInput! / _secondInput!;
+      case Operator.equal:
+        return _firstInput!;
       default:
         return 0;
     }
   }
 
-  String getOutput() {
-    return "$_firstInput $_operator $_secondInput";
-  }
+  String convertToHumanReadableString(double? first, double? second, Operator? operator) {
+    if (first == null) {
+      return "";
+    }
 
-  String getPreviousOutput() {
-    return "$_previousFirstInput $_previousOperator $_previousSecondInput";
+    String firstString = "$first";
+    if (firstString.endsWith(".0")) {
+      firstString = firstString.substring(0, firstString.length - 2);
+    }
+
+    if (first < 0) {
+      firstString = "($firstString)";
+    }
+
+    if (operator == null || operator == Operator.equal) {
+      return firstString;
+    }
+
+    if (second == null) {
+      return "$firstString ${getHumanReadableString(operator)}";
+    }
+
+    String secondString = "$second";
+    if (secondString.endsWith(".0")) {
+      secondString = secondString.substring(0, secondString.length - 2);
+    }
+
+    if (second < 0) {
+      secondString = "($secondString)";
+    }
+
+
+    return "$firstString ${getHumanReadableString(operator)} $secondString";
   }
 
   @override
@@ -182,7 +217,7 @@ class _ResponsiveCalculatorState extends State<ResponsiveCalculator> {
             children: [
               Row(
                 children: [
-                  Expanded(child: Screen(firstRow: getPreviousOutput(), secondRow: getOutput(), isDarkMode: isDarkMode)),
+                  Expanded(child: Screen(firstRow: _firstRow, secondRow: _secondRow, isDarkMode: isDarkMode)),
                 ],
               ),
               SizedBox(height: 450.0, child: Keypad(
