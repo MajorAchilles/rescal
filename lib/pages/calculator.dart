@@ -107,7 +107,7 @@ class _ResponsiveCalculatorState extends State<ResponsiveCalculator> {
       case Operator.decimal:
         if (operator == null) {
           if (!firstInput.toString().contains(".")) {
-            firstInput = firstInput! + 0.0;
+            firstInput = firstInput + 0.0;
           }
         } else {
           if (!secondInput.toString().contains(".")) {
